@@ -1,0 +1,6 @@
+name: Streamline
+version: '1.0.0'
+main: yes.mediumdifficulty.streamline.Streamline
+api-version: 1.19
+authors: [ MediumDifficulty ]
+description: Logic for the Streamline SMP
