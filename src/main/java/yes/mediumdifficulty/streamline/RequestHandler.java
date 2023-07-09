@@ -19,8 +19,8 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class RequestHandler implements HttpHandler {
-    private void closeWithError(HttpExchange exchange, int errCode, @Nullable Map<String, List<String>> headerFields) throws IOException {
-        String res = String.format("{\"err\":%s}", errCode);
+    private void closeWithError(HttpExchange exchange, int errCode, @Nullable Map<String, List<String>> headerFields, String errMsg) throws IOException {
+        String res = String.format("{\"err\":%s, \"message\":\"%s\"}", errCode, errMsg);
 
         if (headerFields != null) {
             exchange.getResponseHeaders().putAll(headerFields);
@@ -41,7 +41,10 @@ public class RequestHandler implements HttpHandler {
             handleInner(exchange);
         } catch(Exception err) {
             try {
-                closeWithError(exchange, 400, null);
+                String error = err.getMessage();
+                
+                logger.warning(error);
+                closeWithError(exchange, 400, null, error);
             } catch(Exception e) {
                 logger.warning("Failed to send error to client");
             }
@@ -53,8 +56,9 @@ public class RequestHandler implements HttpHandler {
         Logger logger = plugin.getLogger();
 
         if (!exchange.getRequestMethod().equals("POST")) {
-            logger.warning("Incoming request not POST type");
-            closeWithError(exchange, 405, Map.of("Allow", List.of("POST")));
+            String err = "Incoming request not POST type";
+            logger.warning(err);
+            closeWithError(exchange, 405, Map.of("Allow", List.of("POST")), err);
             return;
         }
 
@@ -67,8 +71,10 @@ public class RequestHandler implements HttpHandler {
 
             jwt = verifier.verify(new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8));
         } catch (JWTVerificationException exception) {
-            logger.warning("Could not verify incoming jwt");
-            closeWithError(exchange, 403, null);
+            String err = "Could not verify incoming jwt";
+
+            logger.warning(err);
+            closeWithError(exchange, 403, null, err);
             return;
         }
 
