@@ -6,7 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.logging.Logger;
 
 public final class Streamline extends JavaPlugin {
     HttpServer httpServer;

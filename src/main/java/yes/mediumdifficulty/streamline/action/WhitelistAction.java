@@ -5,6 +5,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.json.JSONObject;
 
+import yes.mediumdifficulty.streamline.utils.Uuid;
+
 import java.util.UUID;
 
 public class WhitelistAction extends AbstractAction {
@@ -16,19 +18,25 @@ public class WhitelistAction extends AbstractAction {
 
         Server server = Bukkit.getServer();
 
+        
         switch (operation) {
             case "add" -> {
-                server.getOfflinePlayer(UUID.fromString(payloadJson.getString("uuid"))).setWhitelisted(true);
+                String fullUuid = Uuid.trimmedToFull(payloadJson.getString("uuid"));
+                
+                server.getOfflinePlayer(UUID.fromString(fullUuid)).setWhitelisted(true);
                 return payload;
             }
             case "remove" -> {
-                server.getOfflinePlayer(UUID.fromString(payloadJson.getString("uuid"))).setWhitelisted(false);
+                String fullUuid = Uuid.trimmedToFull(payloadJson.getString("uuid"));
+                
+                server.getOfflinePlayer(UUID.fromString(fullUuid)).setWhitelisted(false);
                 return payload;
             }
             case "list" -> {
                 return JSONObject.valueToString(server.getWhitelistedPlayers()
                         .stream()
                         .map(OfflinePlayer::getUniqueId)
+                        .map(uuid -> Uuid.fullToTrimmed(uuid.toString()))
                         .toArray());
             }
         }
