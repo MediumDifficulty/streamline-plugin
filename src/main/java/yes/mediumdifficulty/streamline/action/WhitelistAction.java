@@ -3,9 +3,7 @@ package yes.mediumdifficulty.streamline.action;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.json.JSONObject;
-import yes.mediumdifficulty.streamline.Streamline;
 
 import java.util.UUID;
 

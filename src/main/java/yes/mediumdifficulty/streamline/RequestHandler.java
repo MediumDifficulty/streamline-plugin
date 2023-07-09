@@ -8,7 +8,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.annotation.Nullable;
@@ -82,9 +81,11 @@ public class RequestHandler implements HttpHandler {
 
         String payload = new String(Base64.getDecoder().decode(jwt.getPayload().getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         JSONObject payloadJSON = new JSONObject(payload);
+        logger.info(payloadJSON.toString(1));
 
-        ActionManager.handleActionAsync(payloadJSON.getString("action"), payloadJSON.getString("payload"), result -> {
+        ActionManager.handleActionAsync(payloadJSON.getString("action"), payloadJSON.get("payload").toString(), result -> {
             try {
+                logger.info(result);
                 exchange.sendResponseHeaders(200, result.length());
                 OutputStream output = exchange.getResponseBody();
                 output.write(result.getBytes());
